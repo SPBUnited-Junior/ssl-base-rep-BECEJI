@@ -61,6 +61,7 @@ class CommandSink(BaseProcessor):
 
         # if len(cmds) > 0:
         #     print(len(cmds), "total delay:", time() - cmds[0].content.last_update())
+        # print(len(cmds))
 
         for cmd in cmds:
             # print(len(cmds))
@@ -161,7 +162,7 @@ class CommandSink(BaseProcessor):
                 rules.append(control_team[i].auto_kick_)
                 rules.append(control_team[i].kicker_voltage_)
                 rules.append(control_team[i].dribbler_enable_)
-                rules.append(control_team[i].dribbler_speed_)
+                rules.append(min(5, control_team[i].dribbler_speed_))
                 rules.append(control_team[i].kicker_charge_enable_)
                 rules.append(control_team[i].beep)
                 rules.append(0)
@@ -169,6 +170,5 @@ class CommandSink(BaseProcessor):
                 for _ in range(13):
                     rules.append(0)
 
-        # rules = [15] * 13 * 32
         b = bytes()
         return b.join((struct.pack("d", rule) for rule in rules))

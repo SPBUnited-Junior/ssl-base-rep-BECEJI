@@ -151,6 +151,7 @@ def is_point_inside_poly(p: Point, points: list[Point]) -> bool:
     """
     Определить, лежит ли точка внутри выпуклого полигона
     """
+
     old_sign = sign(vec_mult(p - points[-1], points[0] - points[-1]))
     for i in range(len(points) - 1):
         if old_sign != sign(vec_mult(p - points[i], points[i + 1] - points[i])):
