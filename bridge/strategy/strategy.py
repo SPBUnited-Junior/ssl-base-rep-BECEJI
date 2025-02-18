@@ -58,6 +58,7 @@ class Strategy:
 #VARIABLES---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         vec = aux.Point(0, 400)
+        wall_vec = aux.Point(0, const.ROBOT_R)
         enemy_GK = field.enemies[enemy_goalkeeper].get_pos()
         ally_GK = field.allies[ally_goalkeeper].get_pos()
         enemy_defender_pos = field.enemies[enemy_defender].get_pos()
@@ -90,8 +91,6 @@ class Strategy:
         if biter_pos.x * field.polarity > enemy_attacker_pos.x * field.polarity: bite += 1
         if biter_pos.x * field.polarity > enemy_defender_pos.x * field.polarity: bite += 2
         if biter_pos.x * field.polarity > enemy_GK.x * field.polarity: bite += 4
-        defend_up_pos = field.enemy_goal.up
-        defend_up_pos = field.enemy_goal.down
        
 
 #GOALKEAPER--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -125,26 +124,86 @@ class Strategy:
         if min(aux.dist(ball_pos, enemy_attacker_pos), aux.dist(ball_pos, enemy_defender_pos), aux.dist(ball_pos, enemy_GK)) < min(aux.dist(ball_pos, ally_attacker_pos), aux.dist(ball_pos, ally_defender_pos), aux.dist(ball_pos, ally_GK)):
             if min(aux.dist(ball_pos, enemy_attacker_pos), aux.dist(ball_pos, enemy_defender_pos), aux.dist(ball_pos, enemy_GK)) == aux.dist(ball_pos, enemy_GK):
                 if enemy_GK.x * field.polarity < enemy_attacker_pos.x * field.polarity:
-                    defender_need_pos = aux.closest_point_on_line(enemy_attacker_pos, enemy_GK, ally_defender_pos, 'S')
-                    attaker_need_pos = aux.closest_point_on_line(enemy_defender_pos, enemy_GK, ally_attacker_pos, 'S')
-                else:
-                    if min((enemy_GK - field.ally_goal.up).arg, (enemy_GK - field.ally_goal.down).arg) == (enemy_GK - field.ally_goal.up).arg:
-                        defender_need_pos = aux.closest_point_on_line(enemy_GK, field.ally_goal.up, ally_defender_pos, 'S')
+                    if enemy_GK.x * field.polarity < enemy_defender_pos.x * field.polarity:
+                        if min((enemy_GK - field.ally_goal.up).arg(), (enemy_GK - field.ally_goal.down).arg()) == (enemy_GK - field.ally_goal.up).arg():
+                            defender_need_pos = aux.closest_point_on_line(enemy_GK, field.ally_goal.up, ally_defender_pos, 'S') + wall_vec
+                            attacker_need_pos = aux.closest_point_on_line(enemy_GK, field.ally_goal.up, ally_attacker_pos, 'S') - wall_vec
+                        else:
+                            defender_need_pos = aux.closest_point_on_line(enemy_GK, field.ally_goal.down, ally_defender_pos, 'S') + wall_vec
+                            attacker_need_pos = aux.closest_point_on_line(enemy_GK, field.ally_goal.down, ally_attacker_pos, 'S') - wall_vec
                     else:
-                        defender_need_pos = aux.closest_point_on_line(enemy_GK, field.ally_goal.down, ally_defender_pos, 'S')
-                waypoints[ally_defender] = wp.Waypoint(defender_need_pos, (ball_pos - ally_defender_pos).arg(), wp.WType.S_ENDPOINT)
+                        attacker_need_pos = aux.closest_point_on_line(enemy_GK, enemy_defender_pos, ally_attacker_pos, 'S')
+                        if min((enemy_GK - field.ally_goal.up).arg(), (enemy_GK - field.ally_goal.down).arg()) == (enemy_GK - field.ally_goal.up).arg():
+                            defender_need_pos = aux.closest_point_on_line(enemy_GK, field.ally_goal.up, ally_defender_pos, 'S')
+                        else:
+                            defender_need_pos = aux.closest_point_on_line(enemy_GK, field.ally_goal.down, ally_defender_pos, 'S')
+                else:
+                    if enemy_GK.x * field.polarity < enemy_defender_pos.x * field.polarity:
+                        attacker_need_pos = aux.closest_point_on_line(enemy_GK, enemy_attacker_pos, ally_attacker_pos, 'S')
+                        if min((enemy_GK - field.ally_goal.up).arg(), (enemy_GK - field.ally_goal.down).arg()) == (enemy_GK - field.ally_goal.up).arg():
+                            defender_need_pos = aux.closest_point_on_line(enemy_GK, field.ally_goal.up, ally_defender_pos, 'S')
+                        else:
+                            defender_need_pos = aux.closest_point_on_line(enemy_GK, field.ally_goal.down, ally_defender_pos, 'S')
+                    else:
+                        attacker_need_pos = aux.closest_point_on_line(enemy_GK, enemy_defender_pos, ally_attacker_pos, 'S')
+                        defender_need_pos = aux.closest_point_on_line(enemy_attacker_pos, enemy_GK, ally_defender_pos, 'S')
+                        
                     
-                attaker_need_pos = aux.closest_point_on_line(enemy_defender_pos, enemy_GK, ally_attacker_pos, 'S')
 
             elif min(aux.dist(ball_pos, enemy_attacker_pos), aux.dist(ball_pos, enemy_defender_pos), aux.dist(ball_pos, enemy_GK)) == aux.dist(ball_pos, enemy_defender_pos):
-                defender_need_pos = aux.closest_point_on_line(enemy_attacker_pos, enemy_defender_pos, ally_defender_pos, 'S')
-                attaker_need_pos = aux.closest_point_on_line(enemy_GK, enemy_defender_pos, ally_attacker_pos, 'S')
+                if enemy_defender_pos.x * field.polarity < enemy_attacker_pos.x * field.polarity:
+                    if enemy_defender_pos.x * field.polarity < enemy_GK.x * field.polarity:
+                        if min((enemy_defender_pos - field.ally_goal.up).arg(), (enemy_defender_pos - field.ally_goal.down).arg()) == (enemy_defender_pos - field.ally_goal.up).arg():
+                            defender_need_pos = aux.closest_point_on_line(enemy_defender_pos, field.ally_goal.up, ally_defender_pos, 'S') + wall_vec
+                            attacker_need_pos = aux.closest_point_on_line(enemy_defender_pos, field.ally_goal.up, ally_attacker_pos, 'S') - wall_vec
+                        else:
+                            defender_need_pos = aux.closest_point_on_line(enemy_defender_pos, field.ally_goal.down, ally_defender_pos, 'S') + wall_vec
+                            attacker_need_pos = aux.closest_point_on_line(enemy_defender_pos, field.ally_goal.down, ally_attacker_pos, 'S') - wall_vec
+                    else:
+                        attacker_need_pos = aux.closest_point_on_line(enemy_defender_pos, enemy_GK, ally_attacker_pos, 'S')
+                        if min((enemy_defender_pos - field.ally_goal.up).arg(), (enemy_defender_pos - field.ally_goal.down).arg()) == (enemy_defender_pos - field.ally_goal.up).arg():
+                            defender_need_pos = aux.closest_point_on_line(enemy_defender_pos, field.ally_goal.up, ally_defender_pos, 'S')
+                        else:
+                            defender_need_pos = aux.closest_point_on_line(enemy_defender_pos, field.ally_goal.down, ally_defender_pos, 'S')
+                else:
+                    if enemy_defender_pos.x * field.polarity < enemy_GK.x * field.polarity:
+                        attacker_need_pos = aux.closest_point_on_line(enemy_defender_pos, enemy_attacker_pos, ally_attacker_pos, 'S')
+                        if min((enemy_defender_pos - field.ally_goal.up).arg(), (enemy_defender_pos - field.ally_goal.down).arg()) == (enemy_defender_pos - field.ally_goal.up).arg():
+                            defender_need_pos = aux.closest_point_on_line(enemy_defender_pos, field.ally_goal.up, ally_defender_pos, 'S')
+                        else:
+                            defender_need_pos = aux.closest_point_on_line(enemy_defender_pos, field.ally_goal.down, ally_defender_pos, 'S')
+                    else:
+                        attacker_need_pos = aux.closest_point_on_line(enemy_defender_pos, enemy_GK, ally_attacker_pos, 'S')
+                        defender_need_pos = aux.closest_point_on_line(enemy_defender_pos, enemy_attacker_pos, ally_defender_pos, 'S')
 
             else:
-                defender_need_pos = aux.closest_point_on_line(enemy_defender_pos, enemy_attacker_pos, ally_defender_pos, 'S')
-                attaker_need_pos = aux.closest_point_on_line(enemy_GK, enemy_attacker_pos, ally_attacker_pos, 'S')
+                if enemy_attacker_pos.x * field.polarity < enemy_defender_pos.x * field.polarity:
+                    if enemy_attacker_pos.x * field.polarity < enemy_GK.x * field.polarity:
+                        if min((enemy_attacker_pos - field.ally_goal.up).arg(), (enemy_attacker_pos - field.ally_goal.down).arg()) == (enemy_attacker_pos - field.ally_goal.up).arg():
+                            defender_need_pos = aux.closest_point_on_line(enemy_attacker_pos, field.ally_goal.up, ally_defender_pos, 'S') + wall_vec
+                            attacker_need_pos = aux.closest_point_on_line(enemy_attacker_pos, field.ally_goal.up, ally_attacker_pos, 'S') - wall_vec
+                        else:
+                            defender_need_pos = aux.closest_point_on_line(enemy_attacker_pos, field.ally_goal.down, ally_defender_pos, 'S') + wall_vec
+                            attacker_need_pos = aux.closest_point_on_line(enemy_attacker_pos, field.ally_goal.down, ally_attacker_pos, 'S') - wall_vec
+                    else:
+                        attacker_need_pos = aux.closest_point_on_line(enemy_attacker_pos, enemy_GK, ally_attacker_pos, 'S')
+                        if min((enemy_attacker_pos - field.ally_goal.up).arg(), (enemy_attacker_pos - field.ally_goal.down).arg()) == (enemy_attacker_pos - field.ally_goal.up).arg():
+                            defender_need_pos = aux.closest_point_on_line(enemy_attacker_pos, field.ally_goal.up, ally_defender_pos, 'S')
+                        else:
+                            defender_need_pos = aux.closest_point_on_line(enemy_attacker_pos, field.ally_goal.down, ally_defender_pos, 'S')
+                else:
+                    if enemy_attacker_pos.x * field.polarity < enemy_GK.x * field.polarity:
+                        attacker_need_pos = aux.closest_point_on_line(enemy_attacker_pos, enemy_defender_pos, ally_attacker_pos, 'S')
+                        if min((enemy_attacker_pos - field.ally_goal.up).arg(), (enemy_attacker_pos - field.ally_goal.down).arg()) == (enemy_attacker_pos - field.ally_goal.up).arg():
+                            defender_need_pos = aux.closest_point_on_line(enemy_attacker_pos, field.ally_goal.up, ally_defender_pos, 'S')
+                        else:
+                            defender_need_pos = aux.closest_point_on_line(enemy_attacker_pos, field.ally_goal.down, ally_defender_pos, 'S')
+                    else:
+                        attacker_need_pos = aux.closest_point_on_line(enemy_attacker_pos, enemy_GK, ally_attacker_pos, 'S')
+                        defender_need_pos = aux.closest_point_on_line(enemy_attacker_pos, enemy_defender_pos, ally_defender_pos, 'S')
 
-            waypoints[ally_attack] = wp.Waypoint(attaker_need_pos,  (ball_pos - ally_attacker_pos).arg(), wp.WType.S_ENDPOINT)
+            waypoints[ally_defender] = wp.Waypoint(defender_need_pos, (ball_pos - ally_defender_pos).arg(), wp.WType.S_ENDPOINT)
+            waypoints[ally_attack] = wp.Waypoint(attacker_need_pos, (ball_pos - ally_attacker_pos).arg(), wp.WType.S_ENDPOINT)
             
 
         # if ball_pos.x > 1250 * field.polarity and abs(ball_pos.y) < 900:
