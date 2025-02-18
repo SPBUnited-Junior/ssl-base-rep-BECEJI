@@ -127,10 +127,10 @@ class Strategy:
                     if enemy_GK.x * field.polarity < enemy_defender_pos.x * field.polarity:
                         if min((enemy_GK - field.ally_goal.up).arg(), (enemy_GK - field.ally_goal.down).arg()) == (enemy_GK - field.ally_goal.up).arg():
                             defender_need_pos = aux.closest_point_on_line(enemy_GK, field.ally_goal.up, ally_defender_pos, 'S') + wall_vec
-                            attacker_need_pos = aux.closest_point_on_line(enemy_GK, field.ally_goal.up, ally_attacker_pos, 'S') - wall_vec
+                            attacker_need_pos = defender_need_pos - wall_vec - wall_vec
                         else:
                             defender_need_pos = aux.closest_point_on_line(enemy_GK, field.ally_goal.down, ally_defender_pos, 'S') + wall_vec
-                            attacker_need_pos = aux.closest_point_on_line(enemy_GK, field.ally_goal.down, ally_attacker_pos, 'S') - wall_vec
+                            attacker_need_pos = defender_need_pos - wall_vec - wall_vec
                     else:
                         attacker_need_pos = aux.closest_point_on_line(enemy_GK, enemy_defender_pos, ally_attacker_pos, 'S')
                         if min((enemy_GK - field.ally_goal.up).arg(), (enemy_GK - field.ally_goal.down).arg()) == (enemy_GK - field.ally_goal.up).arg():
@@ -151,14 +151,14 @@ class Strategy:
                     
 
             elif min(aux.dist(ball_pos, enemy_attacker_pos), aux.dist(ball_pos, enemy_defender_pos), aux.dist(ball_pos, enemy_GK)) == aux.dist(ball_pos, enemy_defender_pos):
-                if enemy_defender_pos.x * field.polarity < enemy_attacker_pos.x * field.polarity:
-                    if enemy_defender_pos.x * field.polarity < enemy_GK.x * field.polarity:
+                if enemy_defender_pos.x * field.polarity > enemy_attacker_pos.x * field.polarity:
+                    if enemy_defender_pos.x * field.polarity > enemy_GK.x * field.polarity:
                         if min((enemy_defender_pos - field.ally_goal.up).arg(), (enemy_defender_pos - field.ally_goal.down).arg()) == (enemy_defender_pos - field.ally_goal.up).arg():
                             defender_need_pos = aux.closest_point_on_line(enemy_defender_pos, field.ally_goal.up, ally_defender_pos, 'S') + wall_vec
-                            attacker_need_pos = aux.closest_point_on_line(enemy_defender_pos, field.ally_goal.up, ally_attacker_pos, 'S') - wall_vec
+                            attacker_need_pos = defender_need_pos - wall_vec - wall_vec
                         else:
                             defender_need_pos = aux.closest_point_on_line(enemy_defender_pos, field.ally_goal.down, ally_defender_pos, 'S') + wall_vec
-                            attacker_need_pos = aux.closest_point_on_line(enemy_defender_pos, field.ally_goal.down, ally_attacker_pos, 'S') - wall_vec
+                            attacker_need_pos = defender_need_pos - wall_vec - wall_vec
                     else:
                         attacker_need_pos = aux.closest_point_on_line(enemy_defender_pos, enemy_GK, ally_attacker_pos, 'S')
                         if min((enemy_defender_pos - field.ally_goal.up).arg(), (enemy_defender_pos - field.ally_goal.down).arg()) == (enemy_defender_pos - field.ally_goal.up).arg():
@@ -177,14 +177,14 @@ class Strategy:
                         defender_need_pos = aux.closest_point_on_line(enemy_defender_pos, enemy_attacker_pos, ally_defender_pos, 'S')
 
             else:
-                if enemy_attacker_pos.x * field.polarity < enemy_defender_pos.x * field.polarity:
-                    if enemy_attacker_pos.x * field.polarity < enemy_GK.x * field.polarity:
+                if enemy_attacker_pos.x * field.polarity > enemy_defender_pos.x * field.polarity:
+                    if enemy_attacker_pos.x * field.polarity > enemy_GK.x * field.polarity:
                         if min((enemy_attacker_pos - field.ally_goal.up).arg(), (enemy_attacker_pos - field.ally_goal.down).arg()) == (enemy_attacker_pos - field.ally_goal.up).arg():
                             defender_need_pos = aux.closest_point_on_line(enemy_attacker_pos, field.ally_goal.up, ally_defender_pos, 'S') + wall_vec
-                            attacker_need_pos = aux.closest_point_on_line(enemy_attacker_pos, field.ally_goal.up, ally_attacker_pos, 'S') - wall_vec
+                            attacker_need_pos = defender_need_pos - wall_vec - wall_vec
                         else:
                             defender_need_pos = aux.closest_point_on_line(enemy_attacker_pos, field.ally_goal.down, ally_defender_pos, 'S') + wall_vec
-                            attacker_need_pos = aux.closest_point_on_line(enemy_attacker_pos, field.ally_goal.down, ally_attacker_pos, 'S') - wall_vec
+                            attacker_need_pos = defender_need_pos - wall_vec - wall_vec
                     else:
                         attacker_need_pos = aux.closest_point_on_line(enemy_attacker_pos, enemy_GK, ally_attacker_pos, 'S')
                         if min((enemy_attacker_pos - field.ally_goal.up).arg(), (enemy_attacker_pos - field.ally_goal.down).arg()) == (enemy_attacker_pos - field.ally_goal.up).arg():
@@ -192,7 +192,7 @@ class Strategy:
                         else:
                             defender_need_pos = aux.closest_point_on_line(enemy_attacker_pos, field.ally_goal.down, ally_defender_pos, 'S')
                 else:
-                    if enemy_attacker_pos.x * field.polarity < enemy_GK.x * field.polarity:
+                    if enemy_attacker_pos.x * field.polarity > enemy_GK.x * field.polarity:
                         attacker_need_pos = aux.closest_point_on_line(enemy_attacker_pos, enemy_defender_pos, ally_attacker_pos, 'S')
                         if min((enemy_attacker_pos - field.ally_goal.up).arg(), (enemy_attacker_pos - field.ally_goal.down).arg()) == (enemy_attacker_pos - field.ally_goal.up).arg():
                             defender_need_pos = aux.closest_point_on_line(enemy_attacker_pos, field.ally_goal.up, ally_defender_pos, 'S')
