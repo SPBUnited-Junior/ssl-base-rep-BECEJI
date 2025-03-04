@@ -57,7 +57,7 @@ class Strategy:
 
 #VARIABLES---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        vec = aux.Point(0, 400)
+        vec = aux.Point(0, 380)
         wall_vec = aux.Point(0, const.ROBOT_R)
         enemy_GK = field.enemies[enemy_goalkeeper].get_pos()
         ally_GK = field.allies[ally_goalkeeper].get_pos()
@@ -100,7 +100,10 @@ class Strategy:
 
         if field.is_ball_stop_near_goal():
             pas = 2
-            waypoints[ally_goalkeeper] = wp.Waypoint(ball_pos, (ally_to_pas - ball_pos).arg(), wp.WType.S_BALL_KICK)
+            if min(aux.dist2line(ally_GK, ally_to_pas, enemy_attacker_pos), aux.dist2line(ally_GK, ally_to_pas, enemy_defender_pos), aux.dist2line(ally_GK, ally_to_pas, enemy_GK) < const.ROBOT_R):
+                waypoints[ally_goalkeeper] = wp.Waypoint(ball_pos, (ally_to_pas - ball_pos).arg(), wp.WType.S_BALL_KICK_UP)
+            else:
+                waypoints[ally_goalkeeper] = wp.Waypoint(ball_pos, (ally_to_pas - ball_pos).arg(), wp.WType.S_BALL_KICK)
         else:
             # if not field.is_ball_moves():st_kick = enemy_goal + vec
             #     pas = 0
@@ -123,9 +126,8 @@ class Strategy:
 #FIELD ROBOTS------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         
         if pas == 2:
-            if (ally_to_pas - ball_pos).mag() > 300:
-                waypoints[to_who_pas] = wp.Waypoint(aux.Point(0 * field.polarity, ball_pos.y), (ally_to_pas - ball_pos).arg() + math.pi, wp.WType.S_ENDPOINT)
-            if not field.is_ball_moves:
+            waypoints[to_who_pas] = wp.Waypoint(aux.Point(0 * field.polarity, ball_pos.y), (ally_to_pas - ally_GK).arg() + math.pi, wp.WType.S_ENDPOINT)
+            if ball_pos.x * field.polarity + const.ROBOT_R * field.polarity >= ally_to_pas.x:
                 pas = 0
         
         elif min(aux.dist(ball_pos, enemy_attacker_pos), aux.dist(ball_pos, enemy_defender_pos), aux.dist(ball_pos, enemy_GK)) < min(aux.dist(ball_pos, ally_attacker_pos), aux.dist(ball_pos, ally_defender_pos), aux.dist(ball_pos, ally_GK)):
@@ -182,6 +184,8 @@ class Strategy:
                     else:
                         attacker_need_pos = aux.closest_point_on_line(enemy_defender_pos, enemy_GK, ally_attacker_pos, 'S')
                         defender_need_pos = aux.closest_point_on_line(enemy_defender_pos, enemy_attacker_pos, ally_defender_pos, 'S')
+
+
 
             else:
                 if enemy_attacker_pos.x * field.polarity > enemy_defender_pos.x * field.polarity:
