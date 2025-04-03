@@ -169,6 +169,7 @@ class CommandSink(BaseProcessor):
             for _ in range(const.TEAM_ROBOTS_MAX_COUNT):
                 for _ in range(13):
                     rules.append(0)
-
+        
+        # rules = [15]*13*32
         b = bytes()
         return b.join((struct.pack("d", rule) for rule in rules))

@@ -19,7 +19,7 @@ DIV = "C"
 COLOR = Color.BLUE
 POLARITY = 1  # -1 если ворота синих на +x; 1 если ворота синих на -x
 
-IS_SIMULATOR_USED = True
+IS_SIMULATOR_USED = False
 IS_DRIBBLER_USED = True  # dribbler and upper_kick
 SELF_PLAY = False
 
@@ -40,38 +40,38 @@ ROBOT_TEAM_PACKET_SIZE: int = SINGLE_ROBOT_PACKET_SIZE * TEAM_ROBOTS_MAX_COUNT
 GEOMETRY_PACKET_SIZE: int = 2
 
 CONTROL_MAPPING: dict[int, int] = {
-    # 0: 8,
-    # 1: 9,
-    # 2: 10,
-    # 3: 11,
-    # 4: 12,
-    # 5: 13,
-    # 6: 14,
-    # 7: 15,
-    # 8: 0,
-    # 9: 1,
-    # 10: 2,
-    # 11: 3,
-    # 12: 4,
-    # 13: 5,
-    # 14: 6,
-    # 15: 7,
-    0: 0,
-    1: 1,
-    2: 2,
-    3: 3,
-    4: 4,
-    5: 5,
-    6: 6,
-    7: 7,
-    8: 8,
-    9: 9,
-    10: 10,
-    11: 11,
-    12: 12,
-    13: 13,
-    14: 14,
-    15: 15,
+    0: 8,
+    1: 9,
+    2: 10,
+    3: 11,
+    4: 12,
+    5: 13,
+    6: 14,
+    7: 15,
+    8: 0,
+    9: 1,
+    10: 2,
+    11: 3,
+    12: 4,
+    13: 5,
+    14: 6,
+    15: 7,
+    # 0: 0,
+    # 1: 1,
+    # 2: 2,
+    # 3: 3,
+    # 4: 4,
+    # 5: 5,
+    # 6: 6,
+    # 7: 7,
+    # 8: 8,
+    # 9: 9,
+    # 10: 10,
+    # 11: 11,
+    # 12: 12,
+    # 13: 13,
+    # 14: 14,
+    # 15: 15,
 }
 REVERSED_KICK: list[int] = []
 
@@ -123,7 +123,7 @@ if DIV == "C":
 KICK_ALIGN_DIST = 200
 GRAB_ALIGN_DIST = 200
 KICK_ALIGN_DIST_MULT = 1.5
-KICK_ALIGN_ANGLE = 0.15
+KICK_ALIGN_ANGLE = 0.10
 KICK_ALIGN_OFFSET = 50
 BALL_GRABBED_DIST = 115
 BALL_GRABBED_ANGLE = 0.8
@@ -138,7 +138,7 @@ FULL_DELAY = 0.16
 
 
 # VOLTAGES
-VOLTAGE_PASS = 5
+VOLTAGE_PASS = 4
 VOLTAGE_SHOOT = 9
 VOLTAGE_UP = 8
 VOLTAGE_ZERO = min(VOLTAGE_PASS, VOLTAGE_SHOOT, VOLTAGE_UP)

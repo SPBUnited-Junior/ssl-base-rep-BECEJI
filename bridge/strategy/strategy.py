@@ -46,21 +46,24 @@ class Strategy:
                 )
             )
 
+        if self.game_status == GameStates(0):
+            return waypoints
 
 #CONSTANTS_________________________________________________________________________________________________________________________________________________________________________________________________________________________________
         game_plan = 0 #0 - medium, 1 - attack, -1 - defend
+
         enemy_attack = 1
         ally_attack = 1
-        enemy_goalkeeper = 0
+        enemy_goalkeeper = 5
         ally_goalkeeper = 0
         enemy_defender = 2
-        ally_defender = 2
+        ally_defender = 3
 
 #VARIABLES_____________________________________________________________________________________________________________________________________________________________________________________________________________________________________
         if game_plan == -1: dist_for_pas = 0
         elif game_plan == 0: dist_for_pas = 250
         else: dist_for_pas = 500
-        vec = aux.Point(0, 380)
+        vec = aux.Point(0, 230)
         wall_vec = aux.Point(0, const.ROBOT_R)
         enemy_GK = field.enemies[enemy_goalkeeper].get_pos()
         ally_GK = field.allies[ally_goalkeeper].get_pos()
@@ -69,19 +72,19 @@ class Strategy:
         st_kick = enemy_goal + vec
         nd_kick = enemy_goal - vec
         goal_pos = field.ally_goal.center
-        goalk_pos = aux.Point(1400 * field.polarity, goal_pos.y)
+        goalk_pos = aux.Point(2100 * field.polarity, goal_pos.y)
         ally_attacker_pos = field.allies[ally_attack].get_pos()
         ally_defender_pos = field.allies[ally_defender].get_pos()
         ball_pos = field.ball.get_pos()
-        point1 = aux.Point(1400 * field.polarity, 460)
-        point2 = aux.Point(1400 * field.polarity, -460)
+        point1 = aux.Point(2100 * field.polarity, 460)
+        point2 = aux.Point(2100 * field.polarity, -460)
         ball_predict = ball_pos + field.ball.get_vel()
         enemy_attacker_pos = field.enemies[enemy_attack].get_pos()
         if aux.dist(field.ally_goal.center, enemy_attacker_pos) < aux.dist(field.ally_goal.center, enemy_defender_pos): the_closest_enemy_number = enemy_attack
         else: the_closest_enemy_number = enemy_defender
         the_closest_enemy_pos = field.enemies[the_closest_enemy_number].get_pos()
         attacker_angle = field.enemies[the_closest_enemy_number].get_angle()
-        look_vec = aux.rotate(aux.Point(1400, 0), field.enemies[enemy_attack].get_angle())
+        look_vec = aux.rotate(aux.Point(2100, 0), field.enemies[enemy_attack].get_angle())
         my_pos = field.allies[ally_goalkeeper].get_pos()
         vec_sides = aux.rotate(aux.Point(500, 0), (ball_pos - my_pos).arg())
         goal_up = aux.Point(goal_pos.x, (goal_pos.y))
@@ -113,10 +116,8 @@ class Strategy:
             pas = 2
             from_who_pas = ally_goalkeeper
             from_who_pas_pos = ally_GK
-            if min(aux.dist2line(ally_GK, ally_to_pas, enemy_attacker_pos), aux.dist2line(ally_GK, ally_to_pas, enemy_defender_pos), aux.dist2line(ally_GK, ally_to_pas, enemy_GK) < const.ROBOT_R):
-                waypoints[ally_goalkeeper] = wp.Waypoint(ball_pos, (ally_to_pas - ball_pos).arg(), wp.WType.S_BALL_KICK_UP)
-            else:
-                waypoints[ally_goalkeeper] = wp.Waypoint(ball_pos, (ally_to_pas - ball_pos).arg(), wp.WType.S_BALL_KICK)
+            
+            waypoints[ally_goalkeeper] = wp.Waypoint(ball_pos, (ally_to_pas - ball_pos).arg(), wp.WType.S_BALL_KICK)
         else:
             # if not field.is_ball_moves():st_kick = enemy_goal + vec
             #     pas = 0
@@ -238,11 +239,7 @@ class Strategy:
             to_who_pas = farest_to_ball_ally
             ally_to_pas = field.allies[to_who_pas].get_pos()
             
-            if min(aux.dist2line(closest_to_ball_ally_pos, farest_to_ball_ally_pos, enemy_attacker_pos), aux.dist2line(closest_to_ball_ally_pos, farest_to_ball_ally_pos, enemy_defender_pos), aux.dist2line(closest_to_ball_ally_pos, farest_to_ball_ally_pos, enemy_GK) < const.ROBOT_R):
-                waypoints[closest_to_ball_ally] = wp.Waypoint(ball_pos, (farest_to_ball_ally_pos - ball_pos).arg(), wp.WType.S_BALL_KICK_UP)
-            else:
-                waypoints[closest_to_ball_ally] = wp.Waypoint(ball_pos, (farest_to_ball_ally_pos - ball_pos).arg(), wp.WType.S_BALL_KICK)
-
+            waypoints[biter] = wp.Waypoint(ball_pos, (farest_to_ball_ally_pos - ball_pos).arg(), wp.WType.S_BALL_KICK)
         
         
         else:
@@ -412,15 +409,15 @@ class Strategy:
             gate_intersection_chosen = aux.Point(field.enemy_goal.center.x, ball_pos.y + 1 / (math.tan(angle_to_shot)) * X_dist_to_goal)
 
             if min(aux.dist2line(ball_pos, gate_intersection_chosen, enemy_attacker_pos), aux.dist2line(ball_pos, gate_intersection_chosen, enemy_defender_pos), aux.dist2line(ball_pos, gate_intersection_chosen, enemy_GK)) < 2 * const.ROBOT_R:
+                
                 pas = 2
                 from_who_pas_pos = field.allies[biter].get_pos()
                 from_who_pas = biter
                 to_who_pas = farest_to_ball_ally
                 ally_to_pas = field.allies[to_who_pas].get_pos()
-                if min(aux.dist2line(biter_pos, farest_to_ball_ally_pos, enemy_attacker_pos), aux.dist2line(biter_pos, farest_to_ball_ally_pos, enemy_defender_pos), aux.dist2line(biter_pos, farest_to_ball_ally_pos, enemy_GK) < const.ROBOT_R):
-                    waypoints[biter] = wp.Waypoint(ball_pos, (farest_to_ball_ally_pos - ball_pos).arg(), wp.WType.S_BALL_KICK_UP)
-                else:
-                    waypoints[biter] = wp.Waypoint(ball_pos, (farest_to_ball_ally_pos - ball_pos).arg(), wp.WType.S_BALL_KICK)
+
+                waypoints[biter] = wp.Waypoint(ball_pos, (farest_to_ball_ally_pos - ball_pos).arg(), wp.WType.S_BALL_KICK)
+                    
             else:
                 waypoints[biter] = wp.Waypoint(ball_pos, angle_to_shot, wp.WType.S_BALL_KICK)
 
@@ -456,7 +453,7 @@ class Strategy:
             if from_who_pas == ally_goalkeeper:
                 waypoints[to_who_pas] = wp.Waypoint(aux.Point(0 * field.polarity, ball_pos.y), (ally_to_pas - ball_pos).arg() + math.pi, wp.WType.S_BALL_GRAB)
             else:
-                waypoints[to_who_pas] = wp.Waypoint(aux.Point(ball_pos.x - dist_for_pas * field.polarity, -from_who_pas_pos.y), (ball_pos - ally_to_pas).arg(),  wp.WType.S_BALL_GRAB)
+                waypoints[to_who_pas] = wp.Waypoint(aux.Point(ball_pos.x - dist_for_pas * field.polarity, -from_who_pas_pos.y), (ball_pos - ally_to_pas).arg() + math.pi,  wp.WType.S_BALL_GRAB)
             # if field.ball.get_vel().mag() < 0.1:
             #     pas = 0
 
